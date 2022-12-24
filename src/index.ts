@@ -1,5 +1,5 @@
 import EightBitWidget from "./EightBitWidget";
-/* import AudioKeyboard from "./AudioKeyboard";
+import AudioKeyboard from "./AudioKeyboard";
 import ConvolverWidget from "./ConvolverWidget";
 import DelayWidget from "./DelayWidget";
 import EnvelopeGeneratorWidget from "./EnvelopeGeneratorWidget";
@@ -10,11 +10,11 @@ import SequencerWidget from "./SequencerWidget";
 import SingleOscillatorWidget from "./SingleOscillatorWidget";
 import SynthWidget from "./SynthWidget";
 import WaveShaperWidget from "./WaveShaperWidget";
-import WhiteNoiseWidget from "./WhiteNoiseWidget";*/
+import WhiteNoiseWidget from "./WhiteNoiseWidget";
 
 export {
   EightBitWidget,
-  /* AudioKeyboard,
+  AudioKeyboard,
   ConvolverWidget,
   DelayWidget,
   EnvelopeGeneratorWidget,
@@ -25,5 +25,5 @@ export {
   SingleOscillatorWidget,
   SynthWidget,
   WaveShaperWidget,
-  WhiteNoiseWidget,*/
+  WhiteNoiseWidget,
 };
