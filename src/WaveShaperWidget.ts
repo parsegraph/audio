@@ -1,9 +1,9 @@
-import {Projector } from 'parsegraph-projector';
-import {SliderNode} from 'parsegraph-slider';
-import {BlockNode, BlockCaret} from 'parsegraph-block';
-import Direction, {Alignment} from 'parsegraph-direction';
+import { Projector } from "parsegraph-projector";
+import { SliderNode } from "parsegraph-slider";
+import { BlockNode, BlockCaret } from "parsegraph-block";
+import Direction, { Alignment } from "parsegraph-direction";
 
-function makeDistortionCurve(amount:number) {
+function makeDistortionCurve(amount: number) {
   const k = typeof amount === "number" ? amount : 50;
   const nSamples = 44100;
   const curve = new Float32Array(nSamples);
@@ -53,45 +53,50 @@ export default class WaveShaperWidget {
       this._waveShapeNode.curve = null;
     }
     return this._waveShapeNode;
-  };
+  }
 
   node() {
     if (this._containerNode) {
       return this._containerNode;
     }
-    let car = new BlockCaret('s');
+    let car = new BlockCaret("s");
     this._containerNode = car.root();
     car.label("WaveShaper");
 
-    this._containerNode.setNodeAlignmentMode(Direction.INWARD, Alignment.INWARD_VERTICAL);
-    this._onButton = new BlockNode('b');
-    this._containerNode.connectNode(
-      Direction.INWARD,this._onButton);
+    this._containerNode.setNodeAlignmentMode(
+      Direction.INWARD,
+      Alignment.INWARD_VERTICAL
+    );
+    this._onButton = new BlockNode("b");
+    this._containerNode.connectNode(Direction.INWARD, this._onButton);
     this._onButton.value().setLabel("Play");
-    this._onButton.value().interact().setClickListener(()=>{
-      this._active = !this._active;
-      if (this._active) {
-        this._onButton.value().setLabel("Stop");
-        if (this._slider) {
-          this._waveShapeNode.curve = makeDistortionCurve(
-            this._slider.value().val() * this._maxAmount
-          );
+    this._onButton
+      .value()
+      .interact()
+      .setClickListener(() => {
+        this._active = !this._active;
+        if (this._active) {
+          this._onButton.value().setLabel("Stop");
+          if (this._slider) {
+            this._waveShapeNode.curve = makeDistortionCurve(
+              this._slider.value().val() * this._maxAmount
+            );
+          }
+          console.log("distortion on");
+        } else {
+          this._onButton.value().setLabel("Start");
+          console.log("distortion off");
+          this._waveShapeNode.curve = null;
         }
-        console.log("distortion on");
-      } else {
-        this._onButton.value().setLabel("Start");
-        console.log("distortion off");
-        this._waveShapeNode.curve = null;
-      }
-      return true;
-    });
+        return true;
+      });
 
-    const oversample = new BlockNode('b');
+    const oversample = new BlockNode("b");
     this._onButton.connectNode(Direction.FORWARD, oversample);
     oversample.state().setScale(0.5);
     car = new BlockCaret(oversample);
     car.label("none");
-    car.onClick(()=>{
+    car.onClick(() => {
       this._oversampling = "none";
       if (this._active) {
         this._waveShapeNode.oversample = this._oversampling;
@@ -100,7 +105,7 @@ export default class WaveShaperWidget {
     });
     car.spawnMove("d", "b");
     car.label("2x");
-    car.onClick(()=>{
+    car.onClick(() => {
       this._oversampling = "2x";
       if (this._active) {
         this._waveShapeNode.oversample = this._oversampling;
@@ -109,7 +114,7 @@ export default class WaveShaperWidget {
     });
     car.spawnMove("d", "b");
     car.label("4x");
-    car.onClick(()=>{
+    car.onClick(() => {
       this._oversampling = "4x";
       if (this._active) {
         this._waveShapeNode.oversample = this._oversampling;
@@ -118,20 +123,15 @@ export default class WaveShaperWidget {
     });
 
     const slider = new SliderNode();
-    this._onButton.connectNode(
-      Direction.DOWNWARD,
-      slider
-    );
+    this._onButton.connectNode(Direction.DOWNWARD, slider);
     slider.value().setVal(0.5);
-    slider.value().setOnChange((val:number)=>{
+    slider.value().setOnChange((val: number) => {
       if (this._active) {
-        this._waveShapeNode.curve = makeDistortionCurve(
-          val * this._maxAmount
-        );
+        this._waveShapeNode.curve = makeDistortionCurve(val * this._maxAmount);
       }
     });
     this._slider = slider;
 
     return this._containerNode;
-  };
+  }
 }
