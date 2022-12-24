@@ -104,9 +104,9 @@ export default class FilterWidget {
       if (Object.prototype.hasOwnProperty.call(this._types, type)) {
         const node = this._types[type];
         if (this._type == type) {
-          node.setBlockStyle(getSelStyle());
+          node.value().setBlockStyle(getSelStyle());
         } else {
-          node.setBlockStyle(getUnselStyle());
+          node.value().setBlockStyle(getUnselStyle());
         }
       }
     }

@@ -80,7 +80,7 @@ export default class SynthWidget {
   refreshTypes() {
     for (const type in this._types) {
       if (Object.prototype.hasOwnProperty.call(this._types, type)) {
-        this._types[type].setBlockStyle(this._oscType == type ? getSelStyle() : getUnselStyle());
+        this._types[type].value().setBlockStyle(this._oscType == type ? getSelStyle() : getUnselStyle());
       }
     }
   };
@@ -90,7 +90,6 @@ export default class SynthWidget {
       const car = new BlockCaret('b');
       this._containerNode = car.root();
       car.label("Synthesizer");
-      // car.fitExact();
 
       car.spawnMove('i', 'u', 'v');
       car.pull('d');

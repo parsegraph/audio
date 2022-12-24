@@ -227,7 +227,7 @@ export default class SequencerWidget {
   _maxBpm: number;
   _bpm: number;
   _detuneScale: number;
-  _sink:AudioDestinationNode;
+  _sink:GainNode;
   _timer:ConstantSourceNode;
   _bpmSlider:SliderNode;
   _gain: GainNode;
@@ -255,8 +255,6 @@ export default class SequencerWidget {
     this._numSteps = 32;
     this._maxBpm = 2000;
     this._bpm = this._maxBpm / 2;
-    // var audio = this._graph.surface().audio();
-    // this._sink = audio.createGain();
     this._detuneScale = 300;
   }
 
@@ -295,6 +293,9 @@ export default class SequencerWidget {
   }
 
   output() {
+    if (!this._sink) {
+      this._sink = this.audio().createGain();
+    }
     return this._sink;
   };
 
@@ -317,7 +318,7 @@ export default class SequencerWidget {
     const tg = audio.createGain();
     this._timer.connect(tg);
     tg.gain.value = 0;
-    tg.connect(this._sink);
+    tg.connect(this.output());
 
     let now = audio.currentTime;
 
@@ -330,7 +331,7 @@ export default class SequencerWidget {
       }
     }
     this._gain = audio.createGain();
-    this._gain.connect(this._sink);
+    this._gain.connect(this.output());
 
     const sineVoice = {
       osc: audio.createOscillator(),
