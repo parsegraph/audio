@@ -79,7 +79,7 @@ export default class EightBitWidget {
       Direction.INWARD,
       Alignment.INWARD_VERTICAL
     );
-    const onOff = car.spawnMove("i", "b");
+    const onOff = car.spawn("i", "b");
     onOff.value().setLabel("Play");
     this._onButton = onOff;
 
@@ -104,6 +104,7 @@ export default class EightBitWidget {
     slider.setOnChange((val: number) => {
       this._dither = val;
     });
+    car.node().connectNode(Direction.DOWNWARD, this._ditherSlider);
 
     return this._containerNode;
   }
