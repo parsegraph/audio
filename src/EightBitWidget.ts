@@ -2,7 +2,7 @@ import { Projector } from "parsegraph-projector";
 import generateID from "parsegraph-generateid";
 import { BlockNode, BlockCaret } from "parsegraph-block";
 import Direction, { Alignment } from "parsegraph-direction";
-import {SliderNode} from 'parsegraph-slider';
+import { SliderNode } from "parsegraph-slider";
 
 export default class EightBitWidget {
   _id: string;
@@ -101,7 +101,7 @@ export default class EightBitWidget {
     slider.setMin(0);
     slider.setMax(1);
     slider.setVal(this._dither);
-    slider.setOnChange((val:number)=>{
+    slider.setOnChange((val: number) => {
       this._dither = val;
     });
 

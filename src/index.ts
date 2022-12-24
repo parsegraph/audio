@@ -1,5 +1,5 @@
 import EightBitWidget from "./EightBitWidget";
-/*import AudioKeyboard from "./AudioKeyboard";
+/* import AudioKeyboard from "./AudioKeyboard";
 import ConvolverWidget from "./ConvolverWidget";
 import DelayWidget from "./DelayWidget";
 import EnvelopeGeneratorWidget from "./EnvelopeGeneratorWidget";
@@ -14,7 +14,7 @@ import WhiteNoiseWidget from "./WhiteNoiseWidget";*/
 
 export {
   EightBitWidget,
-  /*AudioKeyboard,
+  /* AudioKeyboard,
   ConvolverWidget,
   DelayWidget,
   EnvelopeGeneratorWidget,
