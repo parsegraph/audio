@@ -17,7 +17,6 @@ SCRIPT_FILES = \
 	src/SynthWidget.ts \
 	src/demo.ts \
 	src/PrimesWidget.ts \
-	src/AudioKeyboard.ts \
 	test/test.ts
 
 EXTRA_SCRIPTS =
