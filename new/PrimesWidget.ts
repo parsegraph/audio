@@ -1,11 +1,11 @@
 import PrimesModulo from "./PrimesModulo";
-import { style , BlockCaret, DefaultBlockPalette } from "parsegraph-block";
+import { style, BlockCaret, DefaultBlockPalette } from "parsegraph-block";
 import { BlockType } from "parsegraph-blockpainter";
 import Color from "parsegraph-color";
 
 const SLOT_STYLE = {
-  ...style('s', true),
-  backgroundColor: new Color(.73, .726, .719, .2)
+  ...style("s", true),
+  backgroundColor: new Color(0.73, 0.726, 0.719, 0.2),
 };
 
 export default class PrimesWidget {

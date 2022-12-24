@@ -1,19 +1,19 @@
 {
-  "name": "parsegraph-primes",
+  "name": "parsegraph-audio",
   "version": "2.1.24",
-  "description": "primes",
+  "description": "audio",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/parsegraph/primes.git"
+    "url": "git+ssh://git@github.com/parsegraph/audio.git"
   },
   "author": "Rainback, Inc.",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/parsegraph/primes/issues"
+    "url": "https://github.com/parsegraph/audio/issues"
   },
-  "homepage": "https://github.com/parsegraph/primes#readme",
+  "homepage": "https://github.com/parsegraph/audio#readme",
   "devDependencies": {
     "@babel/cli": "^7.19.3",
     "@babel/core": "^7.20.5",
@@ -53,11 +53,7 @@
     "parsegraph-log": "^1.7.3"
   },
   "dependencies": {
-    "parsegraph-block": "^4.5.0",
-    "parsegraph-blockpainter": "^1.7.5",
-    "parsegraph-color": "^1.4.8",
-    "parsegraph-timing": "^1.4.16",
-    "parsegraph-timingbelt": "^1.7.13",
-    "parsegraph-viewport": "^2.7.24"
+    "parsegraph-slider": "^2.0.2",
+    "parsegraph-viewport": "^2.8.0"
   }
 }

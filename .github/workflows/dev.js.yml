@@ -31,5 +31,5 @@ jobs:
     - run: git push --tags
     - uses: actions/upload-artifact@v2
       with:
-        name: parsegraph-primes-dev-${{ github.run_number }}-${{ matrix.node-version }}
-        path: parsegraph-primes-dev.tgz
+        name: parsegraph-audio-dev-${{ github.run_number }}-${{ matrix.node-version }}
+        path: parsegraph-audio-dev.tgz

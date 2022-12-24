@@ -32,5 +32,5 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
     - uses: actions/upload-artifact@v2
       with:
-        name: parsegraph-primes-prod-${{ github.run_number }}
-        path: parsegraph-primes-prod.tgz
+        name: parsegraph-audio-prod-${{ github.run_number }}
+        path: parsegraph-audio-prod.tgz

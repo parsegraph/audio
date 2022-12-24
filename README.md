@@ -1,4 +1,4 @@
-# primes
+# audio
 
 This is for Node projects:
 
@@ -8,7 +8,7 @@ This is for Node projects:
 
 2. Go to https://github.com/parsegraph/ and create a new repository using that name.
 
-3. Clone latest microproject from https://github.com/parsegraph/primes
+3. Clone latest microproject from https://github.com/parsegraph/audio
 
 4. Run ./update-package-name.sh with your package name:
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PUBLISH="npm pub parsegraph-primes-dev.tgz --tag=dev"
+PUBLISH="npm pub parsegraph-audio-dev.tgz --tag=dev"
 $PUBLISH && exit
 for try in `seq 1 3`; do
     sleep $try

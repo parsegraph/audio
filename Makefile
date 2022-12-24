@@ -1,8 +1,7 @@
-DIST_NAME = primes
+DIST_NAME = audio
 
 SCRIPT_FILES = \
 	src/index.ts \
-	src/PrimesModulo.ts \
 	src/demo.ts \
 	src/PrimesWidget.ts \
 	test/test.ts

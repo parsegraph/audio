@@ -1,39 +1,45 @@
-import PrimesWidget from "./PrimesWidget";
 import Navport, { render } from "parsegraph-viewport";
 import TimingBelt from "parsegraph-timingbelt";
 import { elapsed } from "parsegraph-timing";
+import { copyStyle, BlockStyle } from "parsegraph-block";
+import {
+  DelayWidget,
+  ConvolverWidget,
+  SingleOscillatorWidget,
+  EightBitWidget,
+  WaveShaperWidget,
+  SequencerWidget,
+  FilterWidget,
+  SynthWidget,
+} from ".";
+import {Projector, BasicProjector} from 'parsegraph-projector';
+import {BlockCaret} from 'parsegraph-block';
+import Direction, {Alignment, PreferredAxis} from 'parsegraph-direction';
+
+const buildGraph = (proj: Projector)=>{
+  const car = new BlockCaret();
+  car.fitExact();
+  car.node().setNodeAlignmentMode(Direction.DOWNWARD, Alignment.CENTER);
+  const myList = car.spawnMove('d', 'u');
+  myList.setLayoutPreference(PreferredAxis.VERTICAL);
+
+  const bit = new EightBitWidget(proj);
+  car.connect("d", bit.node());
+  return car.root();
+}
 
 document.addEventListener("DOMContentLoaded", () => {
   const viewport = new Navport(null);
-
-  const primes = new PrimesWidget();
-
   const belt = new TimingBelt();
-
-  const totalStart = new Date();
-  const MAX_PRIME = 200;
   belt.setGovernor(false);
   belt.setBurstIdle(true);
-  belt.queueJob(() => {
-    console.log("Processing primes: " + primes.position + " of " + MAX_PRIME);
-    if (!primes.isPaused() && primes.position <= MAX_PRIME) {
-      primes.step();
-    }
-    primes.node().value().scheduleRepaint();
-    belt.scheduleUpdate();
-    if (primes.position > MAX_PRIME) {
-      console.log("Done in " + elapsed(totalStart) + "ms");
-    }
-    return primes.position <= MAX_PRIME;
-  });
+  const proj = new BasicProjector();
 
-  primes.step();
+  const root = buildGraph(proj);
 
   const topElem = document.getElementById("demo");
   topElem.style.position = "relative";
-
-  const root = primes.node();
   viewport.setRoot(root);
   viewport.showInCamera(root);
-  render(topElem, viewport);
+  render(topElem, viewport, proj, belt);
 });
