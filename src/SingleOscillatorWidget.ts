@@ -237,7 +237,7 @@ export default class SingleOscillatorWidget {
       // console.log(this._maxTremoloRange * Math.pow(
       //   this._tremoloScaleSlider.value(), this._sliderCurve));
     } else {
-      this._tremolo.frequency.setValueAtTime(0, this.audio().currentTime, 0.1);
+      this._tremolo.frequency.setValueAtTime(0, this.audio().currentTime);
       this._tremoloSink.gain.setValueAtTime(0, this.audio().currentTime);
     }
     if (this._warbleSwitch.value()) {

@@ -1,59 +1,82 @@
-flangerWidgetCount = 0;
-export default function FlangerWidget(graph) {
-  this._id = flangerWidgetCount++;
-  this._graph = graph;
-  this._containerNode = null;
-  this._listeners = [];
-  this._maxDelay = 5;
-  this._delay = graph.surface().audio().createDelay(this._maxDelay);
-  this._gain = graph.surface().audio().createGain();
-  this._gain.gain.setValueAtTime(
-    this._maxDelay / 2,
-    graph.surface().audio().currentTime
-  );
-  this._osc.connect(this._gain);
-  this._osc = graph.surface().audio().createOscillator();
-  this._osc.frequency.setValueAtTime(5, graph.surface().audio().currentTime);
-  this._osc.start();
-  this._gain.connect(this._delay.delayTime);
-}
+import {Projector} from 'parsegraph-projector';
+import {BlockCaret, BlockNode} from 'parsegraph-block';
+import generateID from 'parsegraph-generateid';
+import Direction, {Alignment} from 'parsegraph-direction';
+import {SliderNode} from 'parsegraph-slider';
 
-FlangerWidget.prototype.audioNode = function () {
-  return this._delay;
-};
+export default class FlangerWidget {
+  _id: string;
+  _proj: Projector;
+  _containerNode: BlockNode;
+  _listeners: any[];
+  _maxDelay: number;
+  _delay: DelayNode;
+  _gain: GainNode;
+  _osc: OscillatorNode;
+  _onButton: BlockNode;
+  _slider: SliderNode;
 
-FlangerWidget.prototype.node = function () {
-  if (this._containerNode) {
-    return this._containerNode;
+  audio() {
+    return this._proj.audio();
   }
-  const car = new Caret(SLOT);
-  this._containerNode = car.root();
-  car.label("Flange");
-  car.fitExact();
 
-  this._containerNode.setNodeAlignmentMode(INWARD, ALIGN_VERTICAL);
-  const onOff = this._containerNode.spawnNode(INWARD, BLOCK);
-  onOff.setLabel("Play", this._graph.font());
-  this._onButton = onOff;
+  constructor(proj:Projector) {
+    this._id = generateID("Flanger");
+    this._proj = proj;
+    this._containerNode = null;
+    this._listeners = [];
+    this._maxDelay = 5;
+    this._delay = this.audio().createDelay(this._maxDelay);
+    this._gain = this.audio().createGain();
+    this._gain.gain.setValueAtTime(
+      this._maxDelay / 2,
+      this.audio().currentTime
+    );
+    this._osc.connect(this._gain);
+    this._osc = this.audio().createOscillator();
+    this._osc.frequency.setValueAtTime(5, this.audio().currentTime);
+    this._osc.start();
+    this._gain.connect(this._delay.delayTime);
+  }
 
-  const slider = onOff.spawnNode(DOWNWARD, SLIDER);
-  slider.setValue(0.5);
-  slider.setChangeListener(function () {
-    if (onOff.label() === "Stop") {
-      this._delay.delayTime.value = this._maxDelay * this._slider.value();
+  audioNode() {
+    return this._delay;
+  };
+
+  node() {
+    if (this._containerNode) {
+      return this._containerNode;
     }
-  }, this);
-  this._slider = slider;
+    const car = new BlockCaret('s');
+    this._containerNode = car.root();
+    car.label("Flange");
+    car.fitExact();
 
-  onOff.setClickListener(function () {
-    if (onOff.label() === "Play") {
-      onOff.setLabel("Stop", this._graph.font());
-      this._delay.delayTime.value = this._slider.value() * this._maxDelay;
-    } else {
-      onOff.setLabel("Play", this._graph.font());
-      this._delay.delayTime.value = 0;
-    }
-  }, this);
+    this._containerNode.setNodeAlignmentMode(Direction.INWARD, Alignment.INWARD_VERTICAL);
+    const onOff = this._containerNode.connectNode(Direction.INWARD, new BlockNode('b'));
+    onOff.value().setLabel("Play");
+    this._onButton = onOff;
 
-  return this._containerNode;
-};
+    const slider = onOff.connectNode(Direction.DOWNWARD, new SliderNode());
+    slider.value().setVal(0.5);
+    slider.value().setOnChange(()=>{
+      if (onOff.value().label() === "Stop") {
+        this._delay.delayTime.value = this._maxDelay * this._slider.value().val();
+      }
+    });
+    this._slider = slider;
+
+    onOff.value().interact().setClickListener(()=>{
+      if (onOff.value().label() === "Play") {
+        onOff.value().setLabel("Stop");
+        this._delay.delayTime.value = this._slider.value().val() * this._maxDelay;
+      } else {
+        onOff.value().setLabel("Play");
+        this._delay.delayTime.value = 0;
+      }
+      return true;
+    });
+
+    return this._containerNode;
+  };
+}

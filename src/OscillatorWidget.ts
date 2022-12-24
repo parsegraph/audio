@@ -1,114 +1,138 @@
-oscillatorWidgetCount = 0;
-export default function OscillatorWidget(graph) {
-  this._id = oscillatorWidgetCount++;
-  this._graph = graph;
-  this._containerNode = null;
-  this._oscType = "sine";
-  this._oscFrequency = 440;
-  this._oscDetune = 0;
-  this._types = {};
-}
+import generateID from "parsegraph-generateid";
+import { BlockNode, BlockCaret } from "parsegraph-block";
+import { Projector } from "parsegraph-projector";
+import Direction, {Alignment} from "parsegraph-direction";
+import { SliderNode } from "parsegraph-slider";
+import {getSelStyle, getUnselStyle} from './updateUnsel';
 
-OscillatorWidget.prototype.build = function (audio) {
-  const oscillator = audio.createOscillator();
-  oscillator.frequency.setValueAtTime(this._oscFrequency, audio.currentTime);
-  oscillator.type = this._oscType;
-  oscillator.detune.setValueAtTime(this._oscDetune, audio.currentTime);
-  return oscillator;
-};
+export default class OscillatorWidget {
+  _proj: Projector;
+  _containerNode: BlockNode;
+  _oscType: OscillatorType;
+  _oscFrequency: number;
+  _oscDetune: number;
+  _types: any;
+  _id: string;
 
-OscillatorWidget.prototype.setOscillatorType = function (oscType) {
-  this._oscType = oscType;
-};
+  constructor(proj:Projector) {
+    this._id = generateID("Oscillator");
+    this._proj = proj;
+    this._containerNode = null;
+    this._oscType = "sine";
+    this._oscFrequency = 440;
+    this._oscDetune = 0;
+    this._types = {};
+  }
 
-OscillatorWidget.prototype.setOscillatorFrequency = function (value) {
-  this._oscFrequency = value;
-};
+  audio() {
+    return this._proj.audio();
+  }
 
-OscillatorWidget.prototype.setOscillatorDetune = function (value) {
-  this._oscDetune = value;
-};
+  build() {
+    const audio = this.audio();
+    const oscillator = audio.createOscillator();
+    oscillator.frequency.setValueAtTime(this._oscFrequency, audio.currentTime);
+    oscillator.type = this._oscType;
+    oscillator.detune.setValueAtTime(this._oscDetune, audio.currentTime);
+    return oscillator;
+  };
 
-OscillatorWidget.prototype.refreshTypes = function () {
-  updateUnsel();
-  for (const type in this._types) {
-    if (Object.prototype.hasOwnProperty.call(this._types, type)) {
-      this._types[type].setBlockStyle(this._oscType == type ? sel : unsel);
+  setOscillatorType(oscType:OscillatorType) {
+    this._oscType = oscType;
+  };
+
+  setOscillatorFrequency(value:number) {
+    this._oscFrequency = value;
+  };
+
+  setOscillatorDetune(value:number) {
+    this._oscDetune = value;
+  };
+
+  refreshTypes() {
+    for (const type in this._types) {
+      if (Object.prototype.hasOwnProperty.call(this._types, type)) {
+        this._types[type].setBlockStyle(this._oscType == type ? getSelStyle() : getUnselStyle());
+      }
     }
-  }
-};
+  };
 
-OscillatorWidget.prototype.node = function () {
-  let FS = 500;
-  const MAXFS = 3000;
-  if (!this._containerNode) {
-    const car = new Caret(BLOCK);
-    this._containerNode = car.root();
-    car.label("Oscillator");
-    // car.fitExact();
+  node() {
+    let FS = 500;
+    const MAXFS = 3000;
+    if (!this._containerNode) {
+      const car = new BlockCaret('b');
+      this._containerNode = car.root();
+      car.label("Oscillator");
+      // car.fitExact();
 
-    car.spawnMove(INWARD, BUD, ALIGN_VERTICAL);
+      car.spawnMove('i', 'b', 'v');
 
-    car.push();
-    car.pull(DOWNWARD);
-    car.shrink();
-    car.spawnMove(DOWNWARD, SLOT);
-    car.label("Type");
-    car.push();
-    ["sine", "square", "sawtooth", "triangle"].forEach(function (oscType, i) {
-      const t = oscType === this._oscType ? "b" : "s";
-      if (i == 0) {
-        car.spawnMove("i", t, "v");
-        car.shrink();
-      } else {
-        car.spawnMove("f", t);
-      }
-      this._types[oscType] = car.node();
-      car.onClick(function () {
-        this.setOscillatorType(oscType);
-        this.refreshTypes();
+      car.push();
+      car.pull('d');
+      car.shrink();
+      car.spawnMove('d', 's');
+      car.label("Type");
+      car.push();
+      ["sine", "square", "sawtooth", "triangle"].forEach(function (oscType, i) {
+        const t = oscType === this._oscType ? "b" : "s";
+        if (i == 0) {
+          car.spawnMove("i", t, "v");
+          car.shrink();
+        } else {
+          car.spawnMove("f", t);
+        }
+        this._types[oscType] = car.node();
+        car.onClick(()=>{
+          this.setOscillatorType(oscType);
+          this.refreshTypes();
+          return true;
+        });
+        car.label(oscType);
       }, this);
-      car.label(oscType);
-    }, this);
-    this.refreshTypes();
-    car.pop();
-    car.pop();
+      this.refreshTypes();
+      car.pop();
+      car.pop();
 
-    // Frequency
-    car.spawnMove(FORWARD, BUD);
-    car.push();
-    car.pull(DOWNWARD);
-    car.spawnMove(DOWNWARD, SLOT);
-    car.label("Frequency");
-    const fsSlider = car.spawn("i", "sli", "v");
-    fsSlider.setValue(FS / MAXFS);
-    fsSlider.setChangeListener(function () {
-      FS = fsSlider.value() * MAXFS;
-      if (this._oscFrequency > FS) {
-        this.setOscillatorFrequency(FS);
-      }
-      freqSlider.setValue(FS > 0 ? this._oscFrequency / FS : 0);
-    }, this);
-    car.pull("d");
-    const freqSlider = car.spawnMove(DOWNWARD, SLIDER);
-    freqSlider.setValue(this._oscFrequency / FS);
-    car.onChange(function () {
-      this.setOscillatorFrequency(freqSlider.value() * FS);
-      // console.log("Frequency=" + this._oscFrequency);
-    }, this);
-    car.pop();
+      // Frequency
+      car.spawnMove('f', 'u');
+      car.push();
+      car.pull('d');
+      car.spawnMove('d', 's');
+      car.label("Frequency");
+      car.node().setNodeAlignmentMode(Direction.INWARD, Alignment.INWARD_VERTICAL);
+      const fsSlider = car.node().connectNode(Direction.INWARD, new SliderNode());
+      fsSlider.value().setVal(FS / MAXFS);
+      fsSlider.value().setOnChange(()=>{
+        FS = fsSlider.value().val() * MAXFS;
+        if (this._oscFrequency > FS) {
+          this.setOscillatorFrequency(FS);
+        }
+        freqSlider.value().setVal(FS > 0 ? this._oscFrequency / FS : 0);
+      });
+      car.pull("d");
+      const freqSlider = car.node().connectNode(Direction.DOWNWARD, new SliderNode());
+      car.move('d');
+      freqSlider.value().setVal(this._oscFrequency / FS);
+      freqSlider.value().setOnChange((val: number)=>{
+        this.setOscillatorFrequency(val * FS);
+        // console.log("Frequency=" + this._oscFrequency);
+      });
+      car.pop();
 
-    // Detune
-    car.spawnMove(FORWARD, BUD);
-    car.spawnMove(DOWNWARD, SLOT);
-    car.label("Detune");
-    car.push();
-    const detuneSlider = car.spawnMove(DOWNWARD, SLIDER);
-    car.onChange(function () {
-      this.setOscillatorDetune(detuneSlider.value() * 200);
-      // console.log("Detune: " + this._oscDetune.value);
-    }, this);
-    car.pop();
-  }
-  return this._containerNode;
-};
+      // Detune
+      car.spawnMove('f', 'u');
+      car.spawnMove('d', 's');
+      car.label("Detune");
+      car.push();
+      const detuneSlider = car.node().connectNode(Direction.DOWNWARD, new SliderNode());
+      car.move('d');
+      detuneSlider.value().setOnChange(val=>{
+        this.setOscillatorDetune(val * 200);
+        // console.log("Detune: " + this._oscDetune.value);
+      });
+      car.pop();
+    }
+    return this._containerNode;
+  };
+}
