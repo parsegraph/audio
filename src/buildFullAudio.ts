@@ -8,25 +8,25 @@ import {
   FilterWidget,
   SynthWidget,
 } from ".";
-import {Projector } from 'parsegraph-projector';
-import {BlockCaret} from 'parsegraph-block';
-import Direction, {Alignment, PreferredAxis} from 'parsegraph-direction';
+import { Projector } from "parsegraph-projector";
+import { BlockCaret } from "parsegraph-block";
+import Direction, { Alignment, PreferredAxis } from "parsegraph-direction";
 
-const buildFullAudio = (proj: Projector)=>{
-  var audio = proj.audio();
+const buildFullAudio = (proj: Projector) => {
+  const audio = proj.audio();
 
-  var compressor = audio.createDynamicsCompressor();
+  const compressor = audio.createDynamicsCompressor();
   compressor.threshold.value = -50;
   compressor.knee.value = 40;
   compressor.ratio.value = 12;
-  //compressor.reduction = -20;
+  // compressor.reduction = -20;
   compressor.attack.value = 0;
   compressor.release.value = 0.25;
 
   const car = new BlockCaret();
   car.fitExact();
   car.node().setNodeAlignmentMode(Direction.DOWNWARD, Alignment.CENTER);
-  const myList = car.spawnMove('d', 'u');
+  const myList = car.spawnMove("d", "u");
   myList.setLayoutPreference(PreferredAxis.VERTICAL);
 
   const bit = new EightBitWidget(proj);
@@ -34,7 +34,7 @@ const buildFullAudio = (proj: Projector)=>{
   const sink = bit.audioNode();
 
   const waveShaperWidget = new WaveShaperWidget(proj);
-  var bqf = audio.createBiquadFilter();
+  const bqf = audio.createBiquadFilter();
   bqf.type = "highpass";
   bqf.frequency.value = 1000;
   bqf.gain.value = 25;
@@ -43,7 +43,7 @@ const buildFullAudio = (proj: Projector)=>{
   waveShaperWidget.audioNode().connect(compressor);
 
   const convolverWidget = new ConvolverWidget(proj);
-  const convolverNode = convolverWidget._convolver;
+  const convolverNode = convolverWidget.audioNode();
   compressor.connect(convolverNode);
 
   const delayWidget = new DelayWidget(proj);
@@ -57,7 +57,7 @@ const buildFullAudio = (proj: Projector)=>{
   convolverNode.connect(audio.destination);
   delayGain.connect(audio.destination);
 
-    /* for(var i = 1; i <= 2; ++i) {
+  /* for(var i = 1; i <= 2; ++i) {
       var dl = audio.createDelay(.2*i);
       dl.delayTime.value = .2*i;
       compressor.connect(dl);
@@ -68,7 +68,7 @@ const buildFullAudio = (proj: Projector)=>{
   const oscillatorWidget = new SingleOscillatorWidget(proj);
 
   const synth = new SynthWidget(proj);
-  synth.onPlay((freq:number)=>{
+  synth.onPlay((freq: number) => {
     const osc = audio.createOscillator();
     osc.frequency.value = freq;
     osc.type = synth._oscType;
@@ -129,5 +129,5 @@ const buildFullAudio = (proj: Projector)=>{
   });
 
   return car.root();
-}
+};
 export default buildFullAudio;

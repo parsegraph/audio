@@ -9,26 +9,26 @@ function parsegraph_WhiteNoiseWidget(graph) {
 
 parsegraph_WhiteNoiseWidget.prototype.audioNode = function () {
   if (!this._audioNode) {
-    var audio = this._graph.surface().audio();
+    const audio = this._graph.surface().audio();
     this._audioNode = audio.createScriptProcessor(4096, 1, 1);
     this._audioNode.onaudioprocess = function (audioProcessingEvent) {
       // The input buffer is the song we loaded earlier
-      var inputBuffer = audioProcessingEvent.inputBuffer;
+      const inputBuffer = audioProcessingEvent.inputBuffer;
 
       // The output buffer contains the samples that will be modified and played
-      var outputBuffer = audioProcessingEvent.outputBuffer;
+      const outputBuffer = audioProcessingEvent.outputBuffer;
 
       // Loop through the output channels (in this case there is only one)
       for (
-        var channel = 0;
+        let channel = 0;
         channel < outputBuffer.numberOfChannels;
         channel++
       ) {
-        var inputData = inputBuffer.getChannelData(channel);
-        var outputData = outputBuffer.getChannelData(channel);
+        const inputData = inputBuffer.getChannelData(channel);
+        const outputData = outputBuffer.getChannelData(channel);
 
         // Loop through the 4096 samples
-        for (var sample = 0; sample < inputBuffer.length; sample++) {
+        for (let sample = 0; sample < inputBuffer.length; sample++) {
           if (this._active) {
             outputData[sample] = Math.random();
           } else {
@@ -49,7 +49,7 @@ parsegraph_WhiteNoiseWidget.prototype.node = function () {
   if (this._containerNode) {
     return this._containerNode;
   }
-  var car = new parsegraph_Caret(parsegraph_SLOT);
+  const car = new parsegraph_Caret(parsegraph_SLOT);
   this._containerNode = car.root();
   car.label("WhiteNoise");
   car.fitExact();
@@ -58,7 +58,7 @@ parsegraph_WhiteNoiseWidget.prototype.node = function () {
     parsegraph_INWARD,
     parsegraph_ALIGN_VERTICAL
   );
-  var onOff = this._containerNode.spawnNode(
+  const onOff = this._containerNode.spawnNode(
     parsegraph_INWARD,
     parsegraph_BLOCK
   );

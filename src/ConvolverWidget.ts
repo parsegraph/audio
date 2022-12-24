@@ -1,4 +1,4 @@
-import generateID from 'parsegraph-generateid';
+import generateID from "parsegraph-generateid";
 import { BlockNode, BlockCaret } from "parsegraph-block";
 import { Projector } from "parsegraph-projector";
 import Direction from "parsegraph-direction";
@@ -6,10 +6,10 @@ import { SliderNode } from "parsegraph-slider";
 
 // https://stackoverflow.com/questions/22525934/connecting-convolvernode-to-an-oscillatornode-with-the-web-audio-the-simple-wa
 export function impulseResponse(
-  audioContext:AudioContext,
-  duration:number,
-  decay:number,
-  reverse:boolean
+  audioContext: AudioContext,
+  duration: number,
+  decay: number,
+  reverse: boolean
 ) {
   const sampleRate = audioContext.sampleRate;
   const length = sampleRate * duration;
@@ -48,70 +48,78 @@ export default class ConvolverWidget {
     this._maxDuration = 8;
     this._maxDecay = 8;
     this._reversed = false;
-
-    this._convolver = this.audio().createConvolver();
-    this.refresh();
   }
 
   audio() {
     return this._proj.audio();
   }
 
-  refresh() {
-    const audio = this.audio();
+  private refresh() {
+    const convolver = this.audioNode();
     if (this._duration == 0 || this._decay == 0) {
-      this._convolver.buffer = null;
+      convolver.buffer = null;
     } else {
-      this._convolver.buffer = impulseResponse(
-        audio,
+      convolver.buffer = impulseResponse(
+        this.audio(),
         this._duration,
         this._decay,
         this._reversed
       );
     }
-  };
+  }
+
+  audioNode() {
+    if (!this._convolver) {
+      this._convolver = this.audio().createConvolver();
+      this.refresh();
+    }
+    return this._convolver;
+  }
 
   node() {
     if (this._containerNode) {
       return this._containerNode;
     }
-    const car = new BlockCaret('b');
+    const car = new BlockCaret("b");
     this._containerNode = car.root();
     car.label("Convolver");
 
-    car.spawnMove('i', 'u', 'v');
-    car.pull('d');
+    car.spawnMove("i", "u", "v");
+    car.pull("d");
     car.shrink();
     const aSlider = new SliderNode();
     car.node().connectNode(Direction.DOWNWARD, aSlider);
-    car.spawnMove('f', 'u');
-    car.pull('d');
+    car.spawnMove("f", "u");
+    car.pull("d");
     car.shrink();
     const bSlider = new SliderNode();
     car.node().connectNode(Direction.DOWNWARD, bSlider);
 
     aSlider.value().setVal(this._decay / this._maxDecay);
-    aSlider.value().setOnChange(()=>{
+    aSlider.value().setOnChange(() => {
       this._decay = Math.pow(aSlider.value().val(), 2) * this._maxDecay;
       this.refresh();
     });
     bSlider.value().setVal(this._duration / this._maxDuration);
-    bSlider.value().setOnChange(()=>{
+    bSlider.value().setOnChange(() => {
       this._duration = Math.pow(bSlider.value().val(), 2) * this._maxDuration;
       this.refresh();
     });
 
-    car.spawnMove('f', 'u');
-    car.pull('d');
+    car.spawnMove("f", "u");
+    car.pull("d");
     car.shrink();
-    const reversedButton = car.spawn('d', 's');
+    const reversedButton = car.spawn("d", "s");
     reversedButton.value().setLabel("Reverse");
-    reversedButton.value().interact().setClickListener(()=>{
-      this._reversed = !this._reversed;
-      this.refresh();
-      return true;
-    });
+    reversedButton
+      .value()
+      .interact()
+      .setClickListener(() => {
+        this._reversed = !this._reversed;
+        this.refresh();
+        return true;
+      });
 
     return this._containerNode;
-  };
+  }
 }
