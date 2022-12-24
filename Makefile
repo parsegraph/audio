@@ -4,6 +4,7 @@ SCRIPT_FILES = \
 	src/WaveShaperWidget.ts \
 	src/EnvelopeGeneratorWidget.ts \
 	src/index.ts \
+	src/OnOffWidget.ts \
 	src/SequencerWidget.ts \
 	src/buildFullAudio.ts \
 	src/FilterWidget.ts \
@@ -16,7 +17,6 @@ SCRIPT_FILES = \
 	src/WhiteNoiseWidget.ts \
 	src/SynthWidget.ts \
 	src/demo.ts \
-	src/PrimesWidget.ts \
 	test/test.ts
 
 EXTRA_SCRIPTS =
