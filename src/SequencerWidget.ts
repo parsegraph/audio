@@ -1,11 +1,11 @@
 import generateID from "parsegraph-generateid";
 import { copyStyle, BlockNode, BlockCaret } from "parsegraph-block";
 import { Projector } from "parsegraph-projector";
-import Direction, {Alignment} from "parsegraph-direction";
+import Direction, { Alignment } from "parsegraph-direction";
 import { SliderNode } from "parsegraph-slider";
-import Color from 'parsegraph-color';
-import SynthWidget from './SynthWidget';
-import {TimeoutTimer} from 'parsegraph-timing';
+import Color from "parsegraph-color";
+import SynthWidget from "./SynthWidget";
+import { TimeoutTimer } from "parsegraph-timing";
 
 export class SequenceStep {
   _seq: SequencerWidget;
@@ -13,40 +13,43 @@ export class SequenceStep {
   _active: boolean;
   _pitchSlider: SliderNode;
   _onButton: BlockNode;
-  _attackSlider:SliderNode;
-  _decaySlider:SliderNode;
-  _sustainLengthSlider:SliderNode;
-  _releaseSlider:SliderNode;
-  _sustainLevelSlider:SliderNode;
+  _attackSlider: SliderNode;
+  _decaySlider: SliderNode;
+  _sustainLengthSlider: SliderNode;
+  _releaseSlider: SliderNode;
+  _sustainLevelSlider: SliderNode;
   _type: string;
 
-  constructor(seq:SequencerWidget, i:number) {
+  constructor(seq: SequencerWidget, i: number) {
     this._seq = seq;
     this._i = i;
     this._active = true;
   }
 
-  setFrequency(freq:number) {
+  setFrequency(freq: number) {
     // if(this._lastOsc) {
     // this._lastOsc.frequency.setValueAtTime(
     //   freq, this._lastOsc.context.currentTime);
     // }
     this._pitchSlider.value().setVal((freq - 16) / 7902);
     // console.log(this._i, this._pitchSlider.value());
-  };
+  }
 
-  setActive(isActive:boolean) {
+  setActive(isActive: boolean) {
     this._active = isActive;
     if (this._active) {
       this._onButton.value().setLabel("On");
     } else {
       this._onButton.value().setLabel("Off");
     }
-  };
+  }
 
-  play(osc:OscillatorNode, gain:GainNode, start:number, end:number) {
+  play(osc: OscillatorNode, gain: GainNode, start: number, end: number) {
     const len = end - start;
-    osc.frequency.setValueAtTime(16 + 7902 * this._pitchSlider.value().val(), start);
+    osc.frequency.setValueAtTime(
+      16 + 7902 * this._pitchSlider.value().val(),
+      start
+    );
     // this._lastOsc = osc;
     if (this._onButton.value().label() == "Off") {
       // console.log("Step is off!");
@@ -80,12 +83,12 @@ export class SequenceStep {
       start + len * (ae + de + se)
     );
     gain.gain.linearRampToValueAtTime(0, start + len * (ae + de + se + re));
-  };
+  }
 
   randomize() {
     this.setFrequency(16 + Math.random() * 7902);
     this.setActive(Math.random() > 0.2);
-  };
+  }
 
   _node: BlockNode;
 
@@ -94,31 +97,34 @@ export class SequenceStep {
       return this._node;
     }
 
-    let step = new BlockNode('b');
+    const step = new BlockNode("b");
     this._node = step;
-    const b = copyStyle('b');
+    const b = copyStyle("b");
     b.backgroundColor = new Color(1, 1, this._i % 2 == 0 ? 1 : 0.8, 1);
     step.value().setBlockStyle(b);
     step.value().setLabel("" + (1 + this._i));
-    const s = step.connectNode(Direction.INWARD, new BlockNode('u'));
+    const s = step.connectNode(Direction.INWARD, new BlockNode("u"));
     s.value().interact().setIgnoreMouse(true);
     s.state().setScale(0.5);
     step.setNodeAlignmentMode(Direction.INWARD, Alignment.INWARD_VERTICAL);
 
-    const stepOn = s.connectNode(Direction.UPWARD, new BlockNode('b'));
+    const stepOn = s.connectNode(Direction.UPWARD, new BlockNode("b"));
     stepOn.value().setLabel(Math.random() > 0.3 ? "On" : "Off");
-    stepOn.value().interact().setClickListener(()=>{
-      this._active = !this._active;
-      if (this._active) {
-        stepOn.value().setLabel("Off");
-      } else {
-        stepOn.value().setLabel("On");
-      }
-      return true;
-    });
+    stepOn
+      .value()
+      .interact()
+      .setClickListener(() => {
+        this._active = !this._active;
+        if (this._active) {
+          stepOn.value().setLabel("Off");
+        } else {
+          stepOn.value().setLabel("On");
+        }
+        return true;
+      });
     this._onButton = stepOn;
 
-    const stepLabel = s.connectNode(Direction.BACKWARD, new BlockNode('b'));
+    const stepLabel = s.connectNode(Direction.BACKWARD, new BlockNode("b"));
     stepLabel.value().setLabel("Pitch");
     stepLabel.state().setScale(0.5);
     let stepSlider = s.connectNode(Direction.FORWARD, new SliderNode());
@@ -126,45 +132,59 @@ export class SequenceStep {
     this._pitchSlider = stepSlider;
     this._pitchSlider.value().setVal(Math.random());
 
-    const ns = s.connectNode(Direction.DOWNWARD, new BlockNode('u'));
-    let tn = ns.connectNode(Direction.FORWARD, new BlockNode('b'));
+    const ns = s.connectNode(Direction.DOWNWARD, new BlockNode("u"));
+    let tn = ns.connectNode(Direction.FORWARD, new BlockNode("b"));
     tn.value().setLabel("sine");
-    tn.value().interact().setClickListener(()=>{
-      this._type = "sine";
-      return true;
-    });
+    tn.value()
+      .interact()
+      .setClickListener(() => {
+        this._type = "sine";
+        return true;
+      });
     tn.state().setScale(0.25);
-    let tnn = tn.connectNode(Direction.DOWNWARD, new BlockNode('b'));
+    let tnn = tn.connectNode(Direction.DOWNWARD, new BlockNode("b"));
     tnn.value().setLabel("triangle");
-    tnn.value().interact().setClickListener(function () {
-      this._type = "triangle";
-      return true;
-    }, this);
+    tnn
+      .value()
+      .interact()
+      .setClickListener(function () {
+        this._type = "triangle";
+        return true;
+      }, this);
     tn = tnn;
-    tnn = tn.connectNode(Direction.DOWNWARD, new BlockNode('b'));
+    tnn = tn.connectNode(Direction.DOWNWARD, new BlockNode("b"));
     tnn.value().setLabel("sawtooth");
-    tnn.value().interact().setClickListener(function () {
-      this._type = "sawtooth";
-      return true;
-    }, this);
+    tnn
+      .value()
+      .interact()
+      .setClickListener(function () {
+        this._type = "sawtooth";
+        return true;
+      }, this);
     tn = tnn;
-    tnn = tn.connectNode(Direction.DOWNWARD, new BlockNode('b'));
+    tnn = tn.connectNode(Direction.DOWNWARD, new BlockNode("b"));
     tnn.value().setLabel("square");
-    tnn.value().interact().setClickListener(function () {
-      this._type = "square";
-      return true;
-    }, this);
+    tnn
+      .value()
+      .interact()
+      .setClickListener(function () {
+        this._type = "square";
+        return true;
+      }, this);
     tn = tnn;
 
-    const nsl = ns.connectNode(Direction.BACKWARD, new BlockNode('b'));
+    const nsl = ns.connectNode(Direction.BACKWARD, new BlockNode("b"));
     nsl.value().setLabel("Type");
     nsl.state().setScale(0.5);
 
     let prior = ns;
 
     // Attack
-    const attackBud = prior.connectNode(Direction.DOWNWARD, new BlockNode('u'));
-    const attackLabel = attackBud.connectNode(Direction.BACKWARD, new BlockNode('b'));
+    const attackBud = prior.connectNode(Direction.DOWNWARD, new BlockNode("u"));
+    const attackLabel = attackBud.connectNode(
+      Direction.BACKWARD,
+      new BlockNode("b")
+    );
     attackLabel.value().setLabel("Attack");
     attackLabel.state().setScale(0.5);
     stepSlider = attackBud.connectNode(Direction.FORWARD, new SliderNode());
@@ -174,8 +194,11 @@ export class SequenceStep {
     prior = attackBud;
 
     // Decay
-    const decayBud = prior.connectNode(Direction.DOWNWARD, new BlockNode('u'));
-    const decayLabel = decayBud.connectNode(Direction.BACKWARD, new BlockNode('b'));
+    const decayBud = prior.connectNode(Direction.DOWNWARD, new BlockNode("u"));
+    const decayLabel = decayBud.connectNode(
+      Direction.BACKWARD,
+      new BlockNode("b")
+    );
     decayLabel.value().setLabel("Decay");
     decayLabel.state().setScale(0.5);
     stepSlider = decayBud.connectNode(Direction.FORWARD, new SliderNode());
@@ -185,16 +208,29 @@ export class SequenceStep {
     prior = decayBud;
 
     // Sustain
-    const sustainBud = prior.connectNode(Direction.DOWNWARD, new BlockNode('u'));
-    const sustainLabel = sustainBud.connectNode(Direction.BACKWARD, new BlockNode('b'));
+    const sustainBud = prior.connectNode(
+      Direction.DOWNWARD,
+      new BlockNode("u")
+    );
+    const sustainLabel = sustainBud.connectNode(
+      Direction.BACKWARD,
+      new BlockNode("b")
+    );
     sustainLabel.value().setLabel("Sustain");
     sustainLabel.state().setScale(0.5);
-    const sustainSliders = sustainBud.connectNode(Direction.FORWARD, new BlockNode('u'));
+    const sustainSliders = sustainBud.connectNode(
+      Direction.FORWARD,
+      new BlockNode("u")
+    );
     sustainSliders.state().setScale(0.5);
-    stepSlider = sustainSliders.connectNode(Direction.FORWARD, new SliderNode());
+    stepSlider = sustainSliders.connectNode(
+      Direction.FORWARD,
+      new SliderNode()
+    );
 
-    const lenSlider = sustainSliders.connectNode(Direction.DOWNWARD, new BlockNode('u'))
-      .connectNode(Direction.FORWARD, new SliderNode())
+    const lenSlider = sustainSliders
+      .connectNode(Direction.DOWNWARD, new BlockNode("u"))
+      .connectNode(Direction.FORWARD, new SliderNode());
     this._sustainLengthSlider = lenSlider;
     this._sustainLengthSlider.value().setVal(Math.random());
 
@@ -203,8 +239,14 @@ export class SequenceStep {
     prior = sustainBud;
 
     // Release
-    const releaseBud = prior.connectNode(Direction.DOWNWARD, new BlockNode('b'));
-    const releaseLabel = releaseBud.connectNode(Direction.BACKWARD, new BlockNode('b'));
+    const releaseBud = prior.connectNode(
+      Direction.DOWNWARD,
+      new BlockNode("b")
+    );
+    const releaseLabel = releaseBud.connectNode(
+      Direction.BACKWARD,
+      new BlockNode("b")
+    );
     releaseLabel.value().setLabel("Release");
     releaseLabel.state().setScale(0.5);
     stepSlider = releaseBud.connectNode(Direction.FORWARD, new SliderNode());
@@ -214,7 +256,7 @@ export class SequenceStep {
     prior = releaseBud;
 
     return this._node;
-  };
+  }
 }
 
 export default class SequencerWidget {
@@ -227,13 +269,13 @@ export default class SequencerWidget {
   _maxBpm: number;
   _bpm: number;
   _detuneScale: number;
-  _sink:GainNode;
-  _timer:ConstantSourceNode;
-  _bpmSlider:SliderNode;
+  _sink: GainNode;
+  _timer: ConstantSourceNode;
+  _bpmSlider: SliderNode;
   _gain: GainNode;
-  _voices: {[key:string]:{osc:OscillatorNode, gain:GainNode}};
+  _voices: { [key: string]: { osc: OscillatorNode; gain: GainNode } };
   _detuneSlider: SliderNode;
-  _synth: ()=>void;
+  _synth: () => void;
   _playing: boolean;
   _startTime: number;
   _beatLength: number;
@@ -258,7 +300,7 @@ export default class SequencerWidget {
     this._detuneScale = 300;
   }
 
-  useSynthesizer(synth:SynthWidget) {
+  useSynthesizer(synth: SynthWidget) {
     if (this._synth) {
       this._synth();
       this._synth = null;
@@ -266,7 +308,7 @@ export default class SequencerWidget {
     if (!synth) {
       return;
     }
-    this._synth = synth.addListener((freq:number)=>{
+    this._synth = synth.addListener((freq: number) => {
       if (!this._recording) {
         return;
       }
@@ -274,7 +316,8 @@ export default class SequencerWidget {
       let step;
       if (this._playing) {
         const t =
-          Math.floor((now - this._startTime) / this._beatLength) % this._numSteps;
+          Math.floor((now - this._startTime) / this._beatLength) %
+          this._numSteps;
         step = this._steps[t];
       } else {
         step = this._steps[this._currentStep];
@@ -286,10 +329,10 @@ export default class SequencerWidget {
       step.setFrequency(freq);
       this.scheduleRepaint();
     });
-  };
+  }
 
   scheduleRepaint() {
-    //this._graph.scheduleRepaint();
+    // this._graph.scheduleRepaint();
   }
 
   output() {
@@ -297,20 +340,20 @@ export default class SequencerWidget {
       this._sink = this.audio().createGain();
     }
     return this._sink;
-  };
+  }
 
-  onPlay(listener:Function, listenerThisArg?:any) {
+  onPlay(listener: Function, listenerThisArg?: any) {
     this._listeners.push([listener, listenerThisArg]);
-  };
+  }
 
   audio() {
     return this._proj.audio();
   }
 
-  play(bpm:number) {
+  play(bpm: number) {
     const audio = this.audio();
     this._timer = audio.createConstantSource();
-    this._timer.onended = ()=>{
+    this._timer.onended = () => {
       this.play(this._maxBpm * this._bpmSlider.value().val());
     };
     this._timer.start();
@@ -418,22 +461,22 @@ export default class SequencerWidget {
     this._currentStep = null;
     this._renderTimer = new TimeoutTimer();
     this._renderTimer.setDelay(this._beatLength);
-    this._renderTimer.setListener(()=>{
+    this._renderTimer.setListener(() => {
       now = this.audio().currentTime;
       const t =
         Math.floor((now - this._startTime) / this._beatLength) % this._numSteps;
       this._currentStep = t;
-      let s = this._steps[t];
+      const s = this._steps[t];
       if (s && t != this._lastSelected) {
         // console.log("Changing step to " + t);
         for (let i = 0; i < this._steps.length; ++i) {
           const s = this._steps[i];
           if (i != t) {
-            const b = copyStyle('b');
+            const b = copyStyle("b");
             b.backgroundColor = new Color(1, 1, i % 2 == 0 ? 1 : 0.8, 1);
             s._node.setBlockStyle(b);
           } else {
-            const b = copyStyle('b');
+            const b = copyStyle("b");
             b.backgroundColor = new Color(0.5, 0, 0, 1);
             s._node.setBlockStyle(b);
           }
@@ -444,89 +487,119 @@ export default class SequencerWidget {
       this._renderTimer.schedule();
     });
     // this._renderTimer.schedule();
-  };
+  }
 
   node() {
     if (this._containerNode) {
       return this._containerNode;
     }
-    const car = new BlockCaret('s');
+    const car = new BlockCaret("s");
     this._containerNode = car.root();
     car.label("Sequencer");
     // car.fitExact();
 
-    this._containerNode.setNodeAlignmentMode(Direction.INWARD, Alignment.INWARD_VERTICAL);
-    const onOff = this._containerNode.connectNode(Direction.INWARD, new BlockNode('b'));
+    this._containerNode.setNodeAlignmentMode(
+      Direction.INWARD,
+      Alignment.INWARD_VERTICAL
+    );
+    const onOff = this._containerNode.connectNode(
+      Direction.INWARD,
+      new BlockNode("b")
+    );
     onOff.value().setLabel("Play");
     this._onButton = onOff;
 
-    this._recordButton = onOff.connectNode(Direction.FORWARD, new BlockNode('b'));
+    this._recordButton = onOff.connectNode(
+      Direction.FORWARD,
+      new BlockNode("b")
+    );
     this._recordButton.value().setLabel("Record");
 
-    this._recordButton.value().interact().setClickListener(()=>{
-      this._recording = !this._recording;
-      if (this._recording) {
-        // Now recording
-        const b = copyStyle('b');
-        b.backgroundColor = new Color(1, 1, 0, 1);
-        this._recordButton.value().setBlockStyle(b);
-        this._recordButton.value().setLabel("Recording");
-      } else {
-        const b = copyStyle('b');
-        this._recordButton.value().setBlockStyle(b);
-        this._recordButton.value().setLabel("Record");
-      }
-      this.scheduleRepaint();
-      return true;
-    });
+    this._recordButton
+      .value()
+      .interact()
+      .setClickListener(() => {
+        this._recording = !this._recording;
+        if (this._recording) {
+          // Now recording
+          const b = copyStyle("b");
+          b.backgroundColor = new Color(1, 1, 0, 1);
+          this._recordButton.value().setBlockStyle(b);
+          this._recordButton.value().setLabel("Recording");
+        } else {
+          const b = copyStyle("b");
+          this._recordButton.value().setBlockStyle(b);
+          this._recordButton.value().setLabel("Record");
+        }
+        this.scheduleRepaint();
+        return true;
+      });
 
     const bpmSlider = onOff.connectNode(Direction.DOWNWARD, new SliderNode());
     bpmSlider.value().setVal(0.5);
-    bpmSlider.value().setOnChange(()=>{
-      //bpmSlider.value();
+    bpmSlider.value().setOnChange(() => {
+      // bpmSlider.value();
     });
     this._bpmSlider = bpmSlider;
 
     this._playing = false;
-    onOff.value().interact().setClickListener(()=>{
-      this._playing = !this._playing;
-      if (this._playing) {
-        // onOff.setLabel("Stop");
-        const v = bpmSlider.value().val();
-        const bpm = v * this._maxBpm;
-        this.play(bpm);
-      } else {
-        onOff.value().setLabel("Play");
-      }
-      return true;
-    });
+    onOff
+      .value()
+      .interact()
+      .setClickListener(() => {
+        this._playing = !this._playing;
+        if (this._playing) {
+          // onOff.setLabel("Stop");
+          const v = bpmSlider.value().val();
+          const bpm = v * this._maxBpm;
+          this.play(bpm);
+        } else {
+          onOff.value().setLabel("Play");
+        }
+        return true;
+      });
 
-    this._resetButton = this._recordButton.connectNode(Direction.FORWARD, new BlockNode('b'));
+    this._resetButton = this._recordButton.connectNode(
+      Direction.FORWARD,
+      new BlockNode("b")
+    );
     this._resetButton.value().setLabel("Reset");
-    this._resetButton.value().interact().setClickListener(()=>{
-      const newFreq = 440;
-      for (let i = 0; i < this._numSteps; ++i) {
-        const step = this._steps[i];
-        step.setFrequency(newFreq);
-        step.setActive(false);
-      }
-      return true;
-    });
+    this._resetButton
+      .value()
+      .interact()
+      .setClickListener(() => {
+        const newFreq = 440;
+        for (let i = 0; i < this._numSteps; ++i) {
+          const step = this._steps[i];
+          step.setFrequency(newFreq);
+          step.setActive(false);
+        }
+        return true;
+      });
 
-    this._randomizeButton = this._resetButton.connectNode(Direction.FORWARD, new BlockNode('b'));
+    this._randomizeButton = this._resetButton.connectNode(
+      Direction.FORWARD,
+      new BlockNode("b")
+    );
     this._randomizeButton.value().setLabel("Randomize");
-    this._randomizeButton.value().interact().setClickListener(()=>{
-      for (let i = 0; i < this._numSteps; ++i) {
-        const step = this._steps[i];
-        step.randomize();
-        step.setActive(false);
-      }
-      return true;
-    });
+    this._randomizeButton
+      .value()
+      .interact()
+      .setClickListener(() => {
+        for (let i = 0; i < this._numSteps; ++i) {
+          const step = this._steps[i];
+          step.randomize();
+          step.setActive(false);
+        }
+        return true;
+      });
 
-    this._detuneSlider = this._randomizeButton.connectNode(Direction.DOWNWARD, new SliderNode());
+    this._detuneSlider = this._randomizeButton.connectNode(
+      Direction.DOWNWARD,
+      new SliderNode()
+    );
     this._detuneSlider.value().setVal(0.5);
-    this._detuneSlider.value().setOnChange(()=>{
+    this._detuneSlider.value().setOnChange(() => {
       for (let i = 0; i < Object.keys(this._voices).length; ++i) {
         const voice = this._voices[Object.keys(this._voices)[i]];
         voice.osc.detune.setValueAtTime(
@@ -536,10 +609,10 @@ export default class SequencerWidget {
       }
     });
 
-    const n = car.spawn('d', 'u', 'c');
-    car.pull('d');
-    const l = n.connectNode(Direction.BACKWARD, new BlockNode('s'));
-    const y = copyStyle('b');
+    const n = car.spawn("d", "u", "c");
+    car.pull("d");
+    const l = n.connectNode(Direction.BACKWARD, new BlockNode("s"));
+    const y = copyStyle("b");
     y.backgroundColor = new Color(1, 1, 0, 1);
     l.value().setBlockStyle(y);
     l.value().setLabel("Oscillator");
@@ -552,24 +625,27 @@ export default class SequencerWidget {
       this._steps.push(newStep);
       rootStep.connectNode(Direction.FORWARD, newStep.node());
       rootStep = newStep.node();
-      rootStep.value().interact().setClickListener(
-        function () {
-          const that = this[0];
-          const i = this[1];
-          if (that._playing) {
-            return true;
-          }
-          that._currentStep = i;
-          return false;
-        },
-        [this, i]
-      );
+      rootStep
+        .value()
+        .interact()
+        .setClickListener(
+          function () {
+            const that = this[0];
+            const i = this[1];
+            if (that._playing) {
+              return true;
+            }
+            that._currentStep = i;
+            return false;
+          },
+          [this, i]
+        );
     }
-    let addStep = rootStep.connectNode(Direction.FORWARD, new BlockNode('u'));
+    let addStep = rootStep.connectNode(Direction.FORWARD, new BlockNode("u"));
     addStep.value().setLabel("+");
 
-    addStep = n.connectNode(Direction.DOWNWARD, new BlockNode('u'));
+    addStep = n.connectNode(Direction.DOWNWARD, new BlockNode("u"));
     addStep.value().setLabel("+");
     return this._containerNode;
-  };
+  }
 }

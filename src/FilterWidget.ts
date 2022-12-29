@@ -1,9 +1,9 @@
 import { BlockNode, BlockCaret } from "parsegraph-block";
 import { Projector } from "parsegraph-projector";
-import Direction, {Alignment} from "parsegraph-direction";
-import Method from 'parsegraph-method';
-import {getSelStyle, getUnselStyle} from './updateUnsel';
-import {SliderNode} from 'parsegraph-slider';
+import Direction, { Alignment } from "parsegraph-direction";
+import Method from "parsegraph-method";
+import { getSelStyle, getUnselStyle } from "./updateUnsel";
+import { SliderNode } from "parsegraph-slider";
 
 export default class FilterWidget {
   _listener: Method;
@@ -36,34 +36,31 @@ export default class FilterWidget {
 
   update() {
     this._listener.call();
-  };
+  }
 
-  setUpdateListener(
-    listener:Function,
-    listenerThisArg?:any
-  ) {
+  setUpdateListener(listener: Function, listenerThisArg?: any) {
     this._listener.set(listener, listenerThisArg);
-  };
+  }
 
-  setDetune(value:number) {
+  setDetune(value: number) {
     this._detune = value;
     this.update();
-  };
+  }
 
-  setFrequency(value:number) {
+  setFrequency(value: number) {
     this._frequency = value;
     this.update();
-  };
+  }
 
-  setGain(value:number) {
+  setGain(value: number) {
     this._gain = value;
     this.update();
-  };
+  }
 
-  setQ(value:number) {
+  setQ(value: number) {
     this._q = value;
     this.update();
-  };
+  }
 
   audio() {
     return this._proj.audio();
@@ -73,9 +70,9 @@ export default class FilterWidget {
     const n = this.audio().createBiquadFilter();
     this.save(n);
     return n;
-  };
+  }
 
-  save(n:BiquadFilterNode) {
+  save(n: BiquadFilterNode) {
     if (!Number.isNaN(this._detune)) {
       n.detune.value = this._detune;
     }
@@ -88,16 +85,16 @@ export default class FilterWidget {
     if (this._type !== "passthrough") {
       n.type = this._type;
     }
-  };
+  }
 
-  load(n:BiquadFilterNode) {
+  load(n: BiquadFilterNode) {
     this._detune = n.detune.value;
     this._q = n.Q.value;
     this._gain = n.gain.value;
     this._frequency = n.frequency.value;
     this._type = n.type;
     this.refreshTypes();
-  };
+  }
 
   refreshTypes() {
     for (const type in this._types) {
@@ -110,7 +107,7 @@ export default class FilterWidget {
         }
       }
     }
-  };
+  }
 
   typeNode() {
     if (!this._typeNode) {
@@ -135,12 +132,16 @@ export default class FilterWidget {
           car.spawnMove("f", "s");
         }
         car.label(type);
-        car.node().value().interact().setClickListener(function () {
-          this._type = type;
-          this.refreshTypes();
-          this.update();
-          return false;
-        }, this);
+        car
+          .node()
+          .value()
+          .interact()
+          .setClickListener(function () {
+            this._type = type;
+            this.refreshTypes();
+            this.update();
+            return false;
+          }, this);
 
         this._types[type] = car.node();
       }, this);
@@ -148,7 +149,7 @@ export default class FilterWidget {
       this._typeNode = car.root();
     }
     return this._typeNode;
-  };
+  }
 
   frequencyNode() {
     if (!this._frequencyNode) {
@@ -157,10 +158,16 @@ export default class FilterWidget {
       this._frequencyNode = car.root();
       const MAXFS = 20000;
       let FS = 2000;
-      car.node().setNodeAlignmentMode(Direction.INWARD, Alignment.INWARD_VERTICAL);
-      const magnitudeSlider = car.node().connectNode(Direction.INWARD, new SliderNode());
-      const valueSlider = car.node().connectNode(Direction.DOWNWARD, new SliderNode());
-      magnitudeSlider.value().setOnChange(()=>{
+      car
+        .node()
+        .setNodeAlignmentMode(Direction.INWARD, Alignment.INWARD_VERTICAL);
+      const magnitudeSlider = car
+        .node()
+        .connectNode(Direction.INWARD, new SliderNode());
+      const valueSlider = car
+        .node()
+        .connectNode(Direction.DOWNWARD, new SliderNode());
+      magnitudeSlider.value().setOnChange(() => {
         FS = magnitudeSlider.value().val() * MAXFS;
         if (valueSlider.value().val() > FS) {
           this.setFrequency(FS);
@@ -169,12 +176,14 @@ export default class FilterWidget {
       });
       magnitudeSlider.value().setVal(FS / MAXFS);
       valueSlider.value().setVal(this._frequency / FS);
-      valueSlider.value().setOnChange(()=>{
-        this.setFrequency(valueSlider.value().val() * magnitudeSlider.value().val() * FS);
+      valueSlider.value().setOnChange(() => {
+        this.setFrequency(
+          valueSlider.value().val() * magnitudeSlider.value().val() * FS
+        );
       });
     }
     return this._frequencyNode;
-  };
+  }
 
   qNode() {
     if (!this._qNode) {
@@ -183,10 +192,16 @@ export default class FilterWidget {
       this._qNode = car.root();
       const MAXFS = 20000;
       let FS = 2000;
-      car.node().setNodeAlignmentMode(Direction.INWARD, Alignment.INWARD_VERTICAL);
-      const magnitudeSlider = car.node().connectNode(Direction.INWARD, new SliderNode());
-      const valueSlider = car.node().connectNode(Direction.DOWNWARD, new SliderNode());
-      magnitudeSlider.value().setOnChange(()=>{
+      car
+        .node()
+        .setNodeAlignmentMode(Direction.INWARD, Alignment.INWARD_VERTICAL);
+      const magnitudeSlider = car
+        .node()
+        .connectNode(Direction.INWARD, new SliderNode());
+      const valueSlider = car
+        .node()
+        .connectNode(Direction.DOWNWARD, new SliderNode());
+      magnitudeSlider.value().setOnChange(() => {
         FS = magnitudeSlider.value().val() * MAXFS;
         if (valueSlider.value().val() > FS) {
           this.setQ(FS);
@@ -195,26 +210,30 @@ export default class FilterWidget {
       });
       magnitudeSlider.value().setVal(FS / MAXFS);
       valueSlider.value().setVal(this._q / FS);
-      valueSlider.value().setOnChange(()=>{
-        this.setQ(valueSlider.value().val() * magnitudeSlider.value().val() * FS);
+      valueSlider.value().setOnChange(() => {
+        this.setQ(
+          valueSlider.value().val() * magnitudeSlider.value().val() * FS
+        );
       });
     }
     return this._qNode;
-  };
+  }
 
   gainNode() {
     if (!this._gainNode) {
       const car = new BlockCaret("s");
       car.label("Gain");
       this._gainNode = car.root();
-      const valueSlider = car.node().connectNode(Direction.DOWNWARD, new SliderNode());
+      const valueSlider = car
+        .node()
+        .connectNode(Direction.DOWNWARD, new SliderNode());
       valueSlider.value().setVal((this._gain + 40) / 80);
-      valueSlider.value().setOnChange((val:number)=>{
+      valueSlider.value().setOnChange((val: number) => {
         this.setGain(-40 + 80 * val);
       });
     }
     return this._gainNode;
-  };
+  }
 
   detuneNode() {
     if (!this._detuneNode) {
@@ -223,11 +242,15 @@ export default class FilterWidget {
       this._detuneNode = car.root();
       const MAXFS = 20000;
       let FS = 2000;
-      const valueSlider = car.node().connectNode(Direction.DOWNWARD, new SliderNode());
+      const valueSlider = car
+        .node()
+        .connectNode(Direction.DOWNWARD, new SliderNode());
       valueSlider.value().setVal((this._gain + 40) / 80);
 
-      const magnitudeSlider = car.node().connectNode(Direction.INWARD, new SliderNode());
-      magnitudeSlider.value().setOnChange((val:number)=>{
+      const magnitudeSlider = car
+        .node()
+        .connectNode(Direction.INWARD, new SliderNode());
+      magnitudeSlider.value().setOnChange((val: number) => {
         FS = magnitudeSlider.value().val() * MAXFS;
         if (val > FS) {
           this.setDetune(FS);
@@ -236,12 +259,14 @@ export default class FilterWidget {
       });
       magnitudeSlider.value().setVal(FS / MAXFS);
       valueSlider.value().setVal(this._detune / FS);
-      valueSlider.value().setOnChange(()=>{
-        this.setDetune(valueSlider.value().val() * magnitudeSlider.value().val() * FS);
+      valueSlider.value().setOnChange(() => {
+        this.setDetune(
+          valueSlider.value().val() * magnitudeSlider.value().val() * FS
+        );
       });
     }
     return this._detuneNode;
-  };
+  }
 
   node() {
     if (!this._containerNode) {
@@ -252,14 +277,18 @@ export default class FilterWidget {
       car.connect("i", this.typeNode());
       car.align("i", "v");
       car.move("i");
-      car.spawnMove("d", "u", "c").connectNode(Direction.DOWNWARD, this.frequencyNode());
+      car
+        .spawnMove("d", "u", "c")
+        .connectNode(Direction.DOWNWARD, this.frequencyNode());
       car.pull("d");
       car.spawnMove("f", "u").connectNode(Direction.DOWNWARD, this.qNode());
-      car.pull('d');
+      car.pull("d");
       car.spawnMove("f", "u").connectNode(Direction.DOWNWARD, this.gainNode());
-      car.pull('d');
-      car.spawnMove("f", "u").connectNode(Direction.DOWNWARD, this.detuneNode());
+      car.pull("d");
+      car
+        .spawnMove("f", "u")
+        .connectNode(Direction.DOWNWARD, this.detuneNode());
     }
     return this._containerNode;
-  };
+  }
 }

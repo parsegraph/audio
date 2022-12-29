@@ -1,14 +1,14 @@
-import {BlockStyle, copyStyle} from 'parsegraph-block';
+import { BlockStyle, copyStyle } from "parsegraph-block";
 
-let unsel:BlockStyle;
-let sel:BlockStyle;
+let unsel: BlockStyle;
+let sel: BlockStyle;
 
-export const getUnselStyle = ()=>{
+export const getUnselStyle = () => {
   updateUnsel();
   return unsel;
 };
 
-export const getSelStyle = ()=>{
+export const getSelStyle = () => {
   updateUnsel();
   return unsel;
 };

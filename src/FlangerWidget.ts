@@ -1,8 +1,8 @@
-import {Projector} from 'parsegraph-projector';
-import {BlockCaret, BlockNode} from 'parsegraph-block';
-import generateID from 'parsegraph-generateid';
-import Direction, {Alignment} from 'parsegraph-direction';
-import {SliderNode} from 'parsegraph-slider';
+import { Projector } from "parsegraph-projector";
+import { BlockCaret, BlockNode } from "parsegraph-block";
+import generateID from "parsegraph-generateid";
+import Direction, { Alignment } from "parsegraph-direction";
+import { SliderNode } from "parsegraph-slider";
 
 export default class FlangerWidget {
   _id: string;
@@ -20,7 +20,7 @@ export default class FlangerWidget {
     return this._proj.audio();
   }
 
-  constructor(proj:Projector) {
+  constructor(proj: Projector) {
     this._id = generateID("Flanger");
     this._proj = proj;
     this._containerNode = null;
@@ -41,42 +41,53 @@ export default class FlangerWidget {
 
   audioNode() {
     return this._delay;
-  };
+  }
 
   node() {
     if (this._containerNode) {
       return this._containerNode;
     }
-    const car = new BlockCaret('s');
+    const car = new BlockCaret("s");
     this._containerNode = car.root();
     car.label("Flange");
     car.fitExact();
 
-    this._containerNode.setNodeAlignmentMode(Direction.INWARD, Alignment.INWARD_VERTICAL);
-    const onOff = this._containerNode.connectNode(Direction.INWARD, new BlockNode('b'));
+    this._containerNode.setNodeAlignmentMode(
+      Direction.INWARD,
+      Alignment.INWARD_VERTICAL
+    );
+    const onOff = this._containerNode.connectNode(
+      Direction.INWARD,
+      new BlockNode("b")
+    );
     onOff.value().setLabel("Play");
     this._onButton = onOff;
 
     const slider = onOff.connectNode(Direction.DOWNWARD, new SliderNode());
     slider.value().setVal(0.5);
-    slider.value().setOnChange(()=>{
+    slider.value().setOnChange(() => {
       if (onOff.value().label() === "Stop") {
-        this._delay.delayTime.value = this._maxDelay * this._slider.value().val();
+        this._delay.delayTime.value =
+          this._maxDelay * this._slider.value().val();
       }
     });
     this._slider = slider;
 
-    onOff.value().interact().setClickListener(()=>{
-      if (onOff.value().label() === "Play") {
-        onOff.value().setLabel("Stop");
-        this._delay.delayTime.value = this._slider.value().val() * this._maxDelay;
-      } else {
-        onOff.value().setLabel("Play");
-        this._delay.delayTime.value = 0;
-      }
-      return true;
-    });
+    onOff
+      .value()
+      .interact()
+      .setClickListener(() => {
+        if (onOff.value().label() === "Play") {
+          onOff.value().setLabel("Stop");
+          this._delay.delayTime.value =
+            this._slider.value().val() * this._maxDelay;
+        } else {
+          onOff.value().setLabel("Play");
+          this._delay.delayTime.value = 0;
+        }
+        return true;
+      });
 
     return this._containerNode;
-  };
+  }
 }

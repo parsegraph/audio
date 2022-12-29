@@ -1,7 +1,7 @@
 import generateID from "parsegraph-generateid";
 import { BlockNode, BlockCaret } from "parsegraph-block";
 import { Projector } from "parsegraph-projector";
-import Direction, {Alignment} from "parsegraph-direction";
+import Direction, { Alignment } from "parsegraph-direction";
 
 export default class WhiteNoiseWidget {
   _proj: Projector;
@@ -12,7 +12,7 @@ export default class WhiteNoiseWidget {
   _active: boolean;
   _onButton: BlockNode;
 
-  constructor(proj:Projector) {
+  constructor(proj: Projector) {
     this._id = generateID("WhiteNoise");
     this._proj = proj;
     this._containerNode = null;
@@ -28,7 +28,7 @@ export default class WhiteNoiseWidget {
     if (!this._audioNode) {
       const audio = this.audio();
       this._audioNode = audio.createScriptProcessor(4096, 1, 1);
-      this._audioNode.onaudioprocess = (audioProcessingEvent)=>{
+      this._audioNode.onaudioprocess = (audioProcessingEvent) => {
         // The input buffer is the song we loaded earlier
         const inputBuffer = audioProcessingEvent.inputBuffer;
 
@@ -56,13 +56,13 @@ export default class WhiteNoiseWidget {
       };
     }
     return this._audioNode;
-  };
+  }
 
   node() {
     if (this._containerNode) {
       return this._containerNode;
     }
-    const car = new BlockCaret('s');
+    const car = new BlockCaret("s");
     this._containerNode = car.root();
     car.label("WhiteNoise");
     car.fitExact();
@@ -71,20 +71,23 @@ export default class WhiteNoiseWidget {
       Direction.INWARD,
       Alignment.INWARD_VERTICAL
     );
-    const onOff = car.spawn('i', 'b');
+    const onOff = car.spawn("i", "b");
     onOff.value().setLabel("Play");
     this._onButton = onOff;
 
-    onOff.value().interact().setClickListener(()=>{
-      this._active = !this._active;
-      if (this._active) {
-        onOff.value().setLabel("Stop");
-      } else {
-        onOff.value().setLabel("Play");
-      }
-      return true;
-    });
+    onOff
+      .value()
+      .interact()
+      .setClickListener(() => {
+        this._active = !this._active;
+        if (this._active) {
+          onOff.value().setLabel("Stop");
+        } else {
+          onOff.value().setLabel("Play");
+        }
+        return true;
+      });
 
     return this._containerNode;
-  };
+  }
 }
