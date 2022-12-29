@@ -53,7 +53,7 @@
     "parsegraph-log": "^1.7.3"
   },
   "dependencies": {
-    "parsegraph-slider": "^2.0.2",
-    "parsegraph-viewport": "^2.8.0"
+    "parsegraph-slider": "^2.0.4",
+    "parsegraph-viewport": "^2.8.1"
   }
 }
