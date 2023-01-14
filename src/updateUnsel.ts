@@ -18,9 +18,9 @@ function updateUnsel() {
     unsel = copyStyle("b");
     unsel.selectedBackgroundColor = unsel.backgroundColor;
     sel = copyStyle("s");
-    //sel.backgroundColor = new parsegraph_Color(.8, .8, .8, 1);
+    // sel.backgroundColor = new parsegraph_Color(.8, .8, .8, 1);
     sel.selectedBackgroundColor = sel.backgroundColor;
-    //sel.fontColor = new parsegraph_Color(1, 0, 0, 1);
+    // sel.fontColor = new parsegraph_Color(1, 0, 0, 1);
     sel.selectedFontColor = sel.fontColor;
   }
 }

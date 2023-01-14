@@ -137,7 +137,7 @@ export default class FilterWidget {
           .node()
           .value()
           .interact()
-          .setClickListener(()=>{
+          .setClickListener(() => {
             this._type = type;
             this.refreshTypes();
             this.update();

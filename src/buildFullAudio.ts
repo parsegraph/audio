@@ -125,8 +125,8 @@ const buildFullAudio = (proj: Projector) => {
       sink.connect(bqf);
     } else {
       filterWidget.save(bqf);
-      //sink.disconnect(bqf);
-      //sink.connect(bqf);
+      // sink.disconnect(bqf);
+      // sink.connect(bqf);
     }
   });
 

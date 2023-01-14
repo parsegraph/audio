@@ -37,7 +37,6 @@ export default class EightBitWidget {
         // The output buffer contains the samples that will be modified and played
         const outputBuffer = audioProcessingEvent.outputBuffer;
 
-
         // Loop through the output channels (in this case there is only one)
         for (
           let channel = 0;

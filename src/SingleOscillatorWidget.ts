@@ -37,7 +37,7 @@ export default class SingleOscillatorWidget {
   _warbleSwitch: OnOffWidget;
   _warbleSlider: SliderNode;
 
-  constructor(proj: Projector, sink:AudioNode) {
+  constructor(proj: Projector, sink: AudioNode) {
     this._id = generateID("SingleOscillator");
     this._proj = proj;
     this._containerNode = null;
@@ -116,9 +116,11 @@ export default class SingleOscillatorWidget {
         if (!this._osc) {
           return;
         }
-        const freq = this._minFrequency +
-            this._frequencyRange * Math.pow(val, this._sliderCurve);
-        this._osc.frequency.exponentialRampToValueAtTime(freq,
+        const freq =
+          this._minFrequency +
+          this._frequencyRange * Math.pow(val, this._sliderCurve);
+        this._osc.frequency.exponentialRampToValueAtTime(
+          freq,
           this.audio().currentTime + 0.1
         );
         freqLabel.value().setLabel("Freq=" + Math.round(freq));
