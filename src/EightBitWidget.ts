@@ -37,6 +37,7 @@ export default class EightBitWidget {
         // The output buffer contains the samples that will be modified and played
         const outputBuffer = audioProcessingEvent.outputBuffer;
 
+
         // Loop through the output channels (in this case there is only one)
         for (
           let channel = 0;
@@ -44,21 +45,21 @@ export default class EightBitWidget {
           channel++
         ) {
           const inputData = inputBuffer.getChannelData(channel);
-          const outputData = outputBuffer.getChannelData(channel);
+          if (!this._active) {
+            outputBuffer.copyToChannel(inputData, channel, 0);
+            continue;
+          }
 
+          const outputData = outputBuffer.getChannelData(channel);
           // Loop through the 4096 samples
           for (let sample = 0; sample < inputBuffer.length; sample++) {
-            if (this._active) {
-              // console.log(((inputData[sample]*0xffffFFFF) &
-              // (-1 << 24))/0xffffFFFF);
-              outputData[sample] =
-                ((inputData[sample] * 0xffffffff) & (-1 << 30)) / 0xffffffff;
-              outputData[sample] =
-                (1 - this._dither) * outputData[sample] +
-                this._dither * Math.random();
-            } else {
-              outputData[sample] = inputData[sample];
-            }
+            // console.log(((inputData[sample]*0xffffFFFF) &
+            // (-1 << 24))/0xffffFFFF);
+            outputData[sample] =
+              ((inputData[sample] * 0xffffffff) & (-1 << 30)) / 0xffffffff;
+            outputData[sample] =
+              (1 - this._dither) * outputData[sample] +
+              this._dither * Math.random();
           }
         }
       };

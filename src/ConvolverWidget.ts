@@ -88,11 +88,13 @@ export default class ConvolverWidget {
     car.pull("d");
     car.shrink();
     const aSlider = new SliderNode();
+    car.label("Decay");
     car.node().connectNode(Direction.DOWNWARD, aSlider);
     car.spawnMove("f", "u");
     car.pull("d");
     car.shrink();
     const bSlider = new SliderNode();
+    car.label("Duration");
     car.node().connectNode(Direction.DOWNWARD, bSlider);
 
     aSlider.value().setVal(this._decay / this._maxDecay);

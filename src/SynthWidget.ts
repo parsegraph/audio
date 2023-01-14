@@ -175,6 +175,7 @@ export default class SynthWidget {
         }
         car.label("" + freq);
         key.value().setBlockStyle(keyBlock);
+        key.value().interact().setImmediateClick(true);
         key
           .value()
           .interact()

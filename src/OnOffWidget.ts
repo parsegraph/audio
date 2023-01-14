@@ -57,6 +57,7 @@ export default class OnOffWidget {
       // Off button.
       car.spawnMove("i", "b", "v");
       car.label("Off");
+      car.node().value().interact().setImmediateClick(true);
       car.onClick(function () {
         this.turnOff();
         return true;
@@ -69,6 +70,7 @@ export default class OnOffWidget {
       // On button.
       car.spawnMove("f", "b");
       car.label("On");
+      car.node().value().interact().setImmediateClick(true);
       car.onClick(function () {
         this.turnOn();
         return true;

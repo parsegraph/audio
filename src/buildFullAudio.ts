@@ -65,21 +65,23 @@ const buildFullAudio = (proj: Projector) => {
       dl.connect(audio.destination);
   }*/
 
-  const oscillatorWidget = new SingleOscillatorWidget(proj);
+  const oscillatorWidget = new SingleOscillatorWidget(proj, bqf);
 
   const synth = new SynthWidget(proj);
+  const osc = audio.createOscillator();
+  osc.start();
+  const g = audio.createGain();
+  g.gain.value = 0;
+  osc.connect(g);
+  g.connect(sink);
   synth.onPlay((freq: number) => {
-    const osc = audio.createOscillator();
     osc.frequency.value = freq;
     osc.type = synth._oscType;
     osc.detune.value = synth._oscDetune;
-    osc.start();
-    const g = audio.createGain();
-    g.gain.value = 0;
-    g.gain.linearRampToValueAtTime(1, audio.currentTime + 0.3);
-    g.gain.linearRampToValueAtTime(0, audio.currentTime + 0.6);
-    osc.connect(g);
-    g.connect(sink);
+    g.gain.linearRampToValueAtTime(0, audio.currentTime);
+    g.gain.linearRampToValueAtTime(1, audio.currentTime + 0.1);
+    g.gain.linearRampToValueAtTime(1, audio.currentTime + 0.9);
+    g.gain.linearRampToValueAtTime(0, audio.currentTime + 1);
   });
   car.spawnMove("f", "u").connectNode(Direction.FORWARD, synth.node());
   car.pull("f");
@@ -90,7 +92,7 @@ const buildFullAudio = (proj: Projector) => {
   sequencerWidget.useSynthesizer(synth);
 
   const filterWidget = new FilterWidget(proj);
-  // filterWidget.load(bqf);
+  filterWidget.load(bqf);
   car.spawnMove("u", "u").connectNode(Direction.FORWARD, filterWidget.node());
 
   car.spawnMove("b", "u");
@@ -123,8 +125,8 @@ const buildFullAudio = (proj: Projector) => {
       sink.connect(bqf);
     } else {
       filterWidget.save(bqf);
-      sink.disconnect(bqf);
-      sink.connect(bqf);
+      //sink.disconnect(bqf);
+      //sink.connect(bqf);
     }
   });
 

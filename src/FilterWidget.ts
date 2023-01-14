@@ -132,16 +132,17 @@ export default class FilterWidget {
           car.spawnMove("f", "s");
         }
         car.label(type);
+        car.node().value().interact().setImmediateClick(true);
         car
           .node()
           .value()
           .interact()
-          .setClickListener(function () {
+          .setClickListener(()=>{
             this._type = type;
             this.refreshTypes();
             this.update();
-            return false;
-          }, this);
+            return true;
+          });
 
         this._types[type] = car.node();
       }, this);

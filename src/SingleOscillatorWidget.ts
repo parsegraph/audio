@@ -12,7 +12,7 @@ export default class SingleOscillatorWidget {
   _containerNode: BlockNode;
   _osc: OscillatorNode;
   _gain: GainNode;
-  _sink: AudioDestinationNode;
+  _sink: AudioNode;
   _minFrequency: number;
   _frequencyRange: number;
   _maxTremoloFreq: number;
@@ -37,13 +37,13 @@ export default class SingleOscillatorWidget {
   _warbleSwitch: OnOffWidget;
   _warbleSlider: SliderNode;
 
-  constructor(proj: Projector) {
+  constructor(proj: Projector, sink:AudioNode) {
     this._id = generateID("SingleOscillator");
     this._proj = proj;
     this._containerNode = null;
     this._osc = null;
     this._gain = null;
-    this._sink = null;
+    this._sink = sink;
     this._minFrequency = 16;
     this._frequencyRange = 2000;
     this._maxTremoloFreq = 40;
@@ -109,17 +109,19 @@ export default class SingleOscillatorWidget {
       car
         .node()
         .setNodeAlignmentMode(Direction.INWARD, Alignment.INWARD_VERTICAL);
+      const freqLabel = car.node();
       car.node().connectNode(Direction.INWARD, this._freqSlider);
       this._freqSlider.value().setVal(0.05);
       this._freqSlider.value().setOnChange((val: number) => {
         if (!this._osc) {
           return;
         }
-        this._osc.frequency.exponentialRampToValueAtTime(
-          this._minFrequency +
-            this._frequencyRange * Math.pow(val, this._sliderCurve),
+        const freq = this._minFrequency +
+            this._frequencyRange * Math.pow(val, this._sliderCurve);
+        this._osc.frequency.exponentialRampToValueAtTime(freq,
           this.audio().currentTime + 0.1
         );
+        freqLabel.value().setLabel("Freq=" + Math.round(freq));
       });
       car.pop();
       car.spawnMove("f", "u");
