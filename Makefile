@@ -1,6 +1,7 @@
 DIST_NAME = audio
 
 SCRIPT_FILES = \
+	src/updateUnsel.ts \
 	src/WaveShaperWidget.ts \
 	src/EnvelopeGeneratorWidget.ts \
 	src/index.ts \
