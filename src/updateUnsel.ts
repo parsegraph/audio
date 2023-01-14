@@ -10,7 +10,7 @@ export const getUnselStyle = () => {
 
 export const getSelStyle = () => {
   updateUnsel();
-  return unsel;
+  return sel;
 };
 
 function updateUnsel() {
