@@ -56,10 +56,10 @@
   },
   "dependencies": {
     "parsegraph-block": "^4.6.17",
-    "parsegraph-color": "^1.4.11",
+    "parsegraph-color": "^1.4.12",
     "parsegraph-direction": "^2.2.1",
-    "parsegraph-generateid": "^1.4.10",
-    "parsegraph-method": "^1.4.24",
+    "parsegraph-generateid": "^1.4.11",
+    "parsegraph-method": "^1.4.25",
     "parsegraph-projector": "^1.14.6",
     "parsegraph-slider": "^2.0.17",
     "parsegraph-timing": "^1.4.17",
