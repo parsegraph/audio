@@ -55,7 +55,15 @@
     "parsegraph-log": "^1.9.2"
   },
   "dependencies": {
+    "parsegraph-block": "^4.6.17",
+    "parsegraph-color": "^1.4.11",
+    "parsegraph-direction": "^2.2.1",
+    "parsegraph-generateid": "^1.4.10",
+    "parsegraph-method": "^1.4.24",
+    "parsegraph-projector": "^1.14.6",
     "parsegraph-slider": "^2.0.11",
+    "parsegraph-timing": "^1.4.17",
+    "parsegraph-timingbelt": "^1.8.1",
     "parsegraph-viewport": "^2.8.12"
   }
 }
