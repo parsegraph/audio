@@ -4202,7 +4202,7 @@ parsegraph-layout@^1.13.14:
     parsegraph-size "^1.7.2"
     parsegraph-timing "^1.4.17"
 
-parsegraph-layout@^1.13.16, parsegraph-layout@^1.13.17:
+parsegraph-layout@^1.13.17:
   version "1.13.17"
   resolved "https://registry.yarnpkg.com/parsegraph-layout/-/parsegraph-layout-1.13.17.tgz#f70a2999616be16da14a8e94bed111787ba79e5b"
   integrity sha512-3rQBNa9Tcis8GoORkxcsn0gIwRsHerWHflm9sTGaJtYKn0xKWBTkh1S55BvnHPD6PAQgvktfx+xyq1T/QV5POQ==
@@ -4328,13 +4328,13 @@ parsegraph-showincamera@^1.7.12:
     parsegraph-size "^1.7.2"
 
 parsegraph-showincamera@^1.7.14:
-  version "1.7.14"
-  resolved "https://registry.yarnpkg.com/parsegraph-showincamera/-/parsegraph-showincamera-1.7.14.tgz#82152eb65df8e46c0e9c8fa5e7bb4e82cd4f9ed1"
-  integrity sha512-5JL67Bcbpk2iR9MB2dR3JDu+F7+lbQM/6C9iucyzidg8jTNgn6DE/KM/G5Ag92BnaAArEpGBKU16bvLr9izDLw==
+  version "1.7.15"
+  resolved "https://registry.yarnpkg.com/parsegraph-showincamera/-/parsegraph-showincamera-1.7.15.tgz#95e491f77974e3caad445f192e45526e6596ae95"
+  integrity sha512-gX5sf5PLnfvJrYTzfAAt2VK1iJIjYp0hVjDg9OSrstS9Dz/ps5x4hd54T0svrTF0JWYVty8jZFF+98fhYZOO9w==
   dependencies:
     parsegraph-camera "^1.4.22"
-    parsegraph-direction "^2.2.3"
-    parsegraph-layout "^1.13.16"
+    parsegraph-direction "^2.2.4"
+    parsegraph-layout "^1.13.17"
     parsegraph-size "^1.7.4"
 
 parsegraph-size@^1.7.2:
