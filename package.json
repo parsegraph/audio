@@ -60,10 +60,10 @@
     "parsegraph-direction": "^2.2.4",
     "parsegraph-generateid": "^1.4.11",
     "parsegraph-method": "^1.4.25",
-    "parsegraph-projector": "^1.14.9",
+    "parsegraph-projector": "^1.14.10",
     "parsegraph-slider": "^2.0.21",
     "parsegraph-timing": "^1.4.19",
     "parsegraph-timingbelt": "^1.8.3",
-    "parsegraph-viewport": "^2.9.13"
+    "parsegraph-viewport": "^2.9.14"
   }
 }
